@@ -122,6 +122,7 @@ reset:
 	ldr		r0, =__bss_start
 	ldr		r1, =_end
 	mov		r2, #0
+    /* 长跳到kernel/main.c kmain()*/
 .L__bss_loop:
 	cmp		r0, r1
 	strlt	r2, [r0], #4

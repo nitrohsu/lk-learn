@@ -37,20 +37,24 @@ static void set_vector_base(addr_t addr)
 void arch_early_init(void)
 {
 	/* turn off the cache */
+	// 关闭cache
 	arch_disable_cache(UCACHE);
 
 	/* set the vector base to our exception vectors so we dont need to double map at 0 */
 #if ARM_CPU_CORTEX_A8
+    // 设置异常向量基地址
 	set_vector_base(MEMBASE);
 #endif
 
 #if ARM_WITH_MMU
+    // 初始化mmu
 	arm_mmu_init();
-
+    // 初始化mmu映射表,平台基本都没有实现???
 	platform_init_mmu_mappings();
 #endif
 
 	/* turn the cache back on */
+    // 打开cache
 	arch_enable_cache(UCACHE);
 
 #if ARM_WITH_NEON

@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
-
+/* _start入口函数,实现在crt0.S*/
 ENTRY(_start)
 SECTIONS
 {

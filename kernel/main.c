@@ -59,36 +59,45 @@ void kmain(void) __NO_RETURN __EXTERNALLY_VISIBLE;
 void kmain(void)
 {
 	// get us into some sort of thread context
+	// 初始化化lk线程上下文,arm平台详见arch/arm/arch.c
 	thread_init_early();
 
 	// early arch stuff
+	// 架构初始化，如关闭cache，使能mmu
 	arch_early_init();
 
 	// do any super early platform initialization
+	// 平台早期初始化,详见platform/***/platform.c
 	platform_early_init();
 
 	// do any super early target initialization
+	//目标设备早期初始化
 	target_early_init();
 
 	dprintf(INFO, "welcome to lk\n\n");
 	
 	// deal with any static constructors
+	// 静态构造函数初始化
 	dprintf(SPEW, "calling constructors\n");
 	call_constructors();
 
 	// bring up the kernel heap
+    // 堆初始化
 	dprintf(SPEW, "initializing heap\n");
 	heap_init();
 
 	// initialize the threading system
+    // 初始化线程
 	dprintf(SPEW, "initializing threads\n");
 	thread_init();
 
 	// initialize the dpc system
+    // lk系统控制器初始化
 	dprintf(SPEW, "initializing dpc\n");
 	dpc_init();
 
 	// initialize kernel timers
+    // kernel时钟初始化
 	dprintf(SPEW, "initializing timers\n");
 	timer_init();
 
@@ -97,9 +106,11 @@ void kmain(void)
 	thread_resume(thread_create("bootstrap2", &bootstrap2, NULL, DEFAULT_PRIORITY, DEFAULT_STACK_SIZE));
 
 	// enable interrupts
+    // 使能中断
 	exit_critical_section();
 
 	// become the idle thread
+    // 本线程切换为idle线程
 	thread_become_idle();
 }
 
@@ -112,13 +123,16 @@ static int bootstrap2(void *arg)
 	arch_init();
 
 	// initialize the rest of the platform
+    // 平台初始化, 主要初始化系统时钟,超频等
 	dprintf(SPEW, "initializing platform\n");
 	platform_init();
 	
 	// initialize the target
+    // 目标设备初始化,主要初始化Flash,整合分区表
 	dprintf(SPEW, "initializing target\n");
 	target_init();
 
+    // 应用功能初始化,调用aboot_init,加载kernel
 	dprintf(SPEW, "calling apps_init()\n");
 	apps_init();
 
